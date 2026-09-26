@@ -139,6 +139,11 @@ docker compose logs --tail=200 app
 檢查 `NEXTAUTH_URL`、`HOST`、
 `JWT_SECRET`、`CUSDIS_ADMIN_USERNAME` 與 `CUSDIS_ADMIN_PASSWORD`，再重建 app。
 
+如果曾在後台修改密碼，PostgreSQL `admin_credentials` 中的加鹽雜湊會取代
+`.env` 初始密碼。重建 container 不會恢復初始密碼。如果忘記自訂密碼，
+先停止對外寫入、備份 PostgreSQL，再由維護者處理 credential record；不要直接寫入
+明文密碼。
+
 ## Backup timer 失敗
 
 ```sh

@@ -25,10 +25,20 @@ chmod 600 .env
 | `HOST` | 同一個 Bear Comment 公開 HTTPS URL |
 | `JWT_SECRET` | 至少 32 字元的隨機值 |
 | `CUSDIS_ADMIN_USERNAME` | 本地管理員登入名稱 |
-| `CUSDIS_ADMIN_PASSWORD` | 至少 12 字元的管理員密碼 |
+| `CUSDIS_ADMIN_PASSWORD` | 至少 12 字元的初始管理員密碼 |
 | `CORS_ORIGINS` | 可嵌入 widget 的完整 origin，以逗號分隔 |
 
 Compose 會設定 `DB_TYPE=pgsql`。原生部署必須自行設定。
+
+### 部署後修改管理員密碼
+
+首次登入使用 `.env` 的 `CUSDIS_ADMIN_PASSWORD`。登入後點擊後台右上角的
+管理員名稱，在「修改管理員密碼」輸入現有密碼與新密碼。新密碼必須為
+12 至 128 個字元。
+
+修改後的密碼以 scrypt 加鹽雜湊存入 PostgreSQL，不會以明文寫回 `.env`。
+資料庫中已有自訂密碼時，`.env` 初始密碼不再能登入。更新成功後，
+現有管理 session 會失效，必須使用新密碼重新登入。
 
 ### 網路與 rate limit
 

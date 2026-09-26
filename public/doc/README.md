@@ -15,6 +15,7 @@
 
 - Dashboard：[/dashboard](/dashboard)
 - Project 可管理評論、回覆、批准、刪除與設定。
+- 首次登入後，可從後台右上角的使用者設定修改管理員密碼。
 - 管理員登入資料只應保存在 password manager 或伺服器的安全 credential note。
 
 ## 資料控制

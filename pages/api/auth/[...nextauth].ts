@@ -13,6 +13,7 @@ declare module 'next-auth' {
 declare module 'next-auth/jwt' {
   interface JWT {
     id?: string
+    adminCredentialVersion?: number
   }
 }
 
@@ -35,6 +36,9 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id
+        if (typeof (user as any).adminCredentialVersion === 'number') {
+          token.adminCredentialVersion = (user as any).adminCredentialVersion
+        }
       }
       return token
     },

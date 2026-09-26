@@ -3,20 +3,11 @@ import CredentialsProvider from 'next-auth/providers/credentials'
 import GitHubProvider from 'next-auth/providers/github'
 import GitLabProvider from 'next-auth/providers/gitlab'
 import GoogleProvider from 'next-auth/providers/google'
-import crypto from 'crypto'
 import { prisma, resolvedConfig } from './utils.server'
 import { checkLoginRateLimit } from './service/request-security.service'
+import { verifyLocalAdminCredentials } from './service/admin-credential.service'
 
 const providers: Provider[] = []
-
-function secretsEqual(actual: string, expected: string) {
-  const actualBuffer = Buffer.from(actual)
-  const expectedBuffer = Buffer.from(expected)
-  return (
-    actualBuffer.length === expectedBuffer.length &&
-    crypto.timingSafeEqual(actualBuffer, expectedBuffer)
-  )
-}
 
 if (resolvedConfig.useLocalAuth) {
   providers.push(
@@ -51,15 +42,17 @@ if (resolvedConfig.useLocalAuth) {
           return null
         }
 
-        if (
-          credentials?.username &&
-          credentials?.password &&
-          resolvedConfig.localAuth.username &&
-          resolvedConfig.localAuth.password &&
-          secretsEqual(credentials.username, resolvedConfig.localAuth.username) &&
-          secretsEqual(credentials.password, resolvedConfig.localAuth.password)
-        ) {
-          return prisma.user.upsert({
+        if (credentials?.username && credentials?.password) {
+          const credentialVersion = await verifyLocalAdminCredentials(
+            credentials.username,
+            credentials.password,
+          )
+
+          if (credentialVersion === null) {
+            return null
+          }
+
+          const user = await prisma.user.upsert({
             where: {
               id: credentials.username,
             },
@@ -71,6 +64,8 @@ if (resolvedConfig.useLocalAuth) {
               name: credentials.username,
             },
           })
+
+          return Object.assign(user, { adminCredentialVersion: credentialVersion })
         }
 
         return null

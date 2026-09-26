@@ -6,7 +6,10 @@
 
 - 管理 API 使用 NextAuth JWT session。
 - 所有 project/comment 管理操作都檢查資源是否屬於目前管理員。
-- 本地密碼、JWT secret 和 OAuth 都在啟動前驗證。
+- 本地初始密碼、JWT secret 和 OAuth 都在啟動前驗證。
+- 後台可修改本地管理員密碼；密碼以 scrypt 加鹽雜湊存入 PostgreSQL。
+- 修改密碼 API 檢查 session、同源請求、現有密碼與 rate limit。
+- 密碼版本會綁定 JWT；修改密碼後，舊的管理 session 會失效。
 - OAuth 只允許 `ALLOWED_AUTH_EMAILS` 中的帳號。
 - 審核連結是有期限的簽名 token；收到連結的人可批准評論，因此必須當作敏感資料。
 

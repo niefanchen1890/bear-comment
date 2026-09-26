@@ -3,7 +3,7 @@ import { useMutation, useQuery } from "react-query"
 import { useRouter } from "next/router"
 import { AiOutlineSetting, AiOutlineFileText, AiOutlinePlus, AiOutlineComment, AiOutlineCode, AiOutlineRight, AiOutlineDown, AiOutlineQuestionCircle } from 'react-icons/ai'
 import { signOut } from "next-auth/react"
-import { Anchor, AppShell, Badge, Button, Code, Group, Header, Menu, Modal, Navbar, NavLink, Stack, Switch, Text, TextInput, Title } from "@mantine/core"
+import { Anchor, AppShell, Badge, Button, Code, Divider, Group, Header, Menu, Modal, Navbar, NavLink, PasswordInput, Stack, Switch, Text, TextInput, Title } from "@mantine/core"
 import Link from "next/link"
 import type { ProjectServerSideProps } from "../pages/dashboard/project/[projectId]/settings"
 import { modals } from "@mantine/modals"
@@ -36,6 +36,14 @@ const updateUserSettings = async (params: {
   return res.data
 }
 
+const changeAdminPassword = async (params: {
+  currentPassword: string,
+  newPassword: string,
+}) => {
+  const res = await apiClient.post('/admin/password', params)
+  return res.data
+}
+
 export function MainLayout(props: {
   children?: any,
   id: 'comments' | 'settings'
@@ -45,6 +53,9 @@ export function MainLayout(props: {
   const router = useRouter()
   const clipboard = useClipboard()
   const [isUserPannelOpen, { open: openUserModal, close: closeUserModal }] = useDisclosure(false);
+  const [currentPassword, setCurrentPassword] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
 
   const userSettingsForm = useForm({
     defaultValues: {
@@ -87,6 +98,26 @@ export function MainLayout(props: {
       })
     }
   })
+  const changePasswordMutation = useMutation(changeAdminPassword, {
+    async onSuccess() {
+      notifications.show({
+        title: '密碼已更新',
+        message: '為了安全，請使用新密碼重新登入',
+        color: 'green'
+      })
+      setCurrentPassword('')
+      setNewPassword('')
+      setConfirmPassword('')
+      await signOut({ callbackUrl: '/auth/signin' })
+    },
+    onError(error: any) {
+      notifications.show({
+        title: '無法更新密碼',
+        message: error?.response?.data?.message || '發生錯誤，請稍後再試',
+        color: 'red'
+      })
+    }
+  })
 
   const onClickSaveUserSettings = async () => {
     const data = userSettingsForm.getValues()
@@ -102,6 +133,27 @@ export function MainLayout(props: {
       displayName: data.displayName,
       notificationEmail: data.notificationEmail,
     })
+  }
+
+  const onClickChangePassword = () => {
+    if (newPassword.length < 12 || newPassword.length > 128) {
+      notifications.show({
+        title: '密碼長度不正確',
+        message: '新密碼必須為 12 至 128 個字元',
+        color: 'red'
+      })
+      return
+    }
+    if (newPassword !== confirmPassword) {
+      notifications.show({
+        title: '密碼不一致',
+        message: '請確認兩次輸入的新密碼相同',
+        color: 'red'
+      })
+      return
+    }
+
+    changePasswordMutation.mutate({ currentPassword, newPassword })
   }
 
   const projectId = router.query.projectId as string
@@ -296,6 +348,33 @@ export function MainLayout(props: {
               <TextInput placeholder={props.userInfo.name} {...userSettingsForm.register("displayName")} size="sm" />
             </Stack>
             <Button loading={updateUserSettingsMutation.isLoading} onClick={onClickSaveUserSettings}>儲存</Button>
+            <Divider label="修改管理員密碼" labelPosition="center" />
+            <PasswordInput
+              label="現有密碼"
+              value={currentPassword}
+              onChange={(event) => setCurrentPassword(event.currentTarget.value)}
+              autoComplete="current-password"
+            />
+            <PasswordInput
+              label="新密碼"
+              description="請使用 12 至 128 個字元"
+              value={newPassword}
+              onChange={(event) => setNewPassword(event.currentTarget.value)}
+              autoComplete="new-password"
+            />
+            <PasswordInput
+              label="確認新密碼"
+              value={confirmPassword}
+              onChange={(event) => setConfirmPassword(event.currentTarget.value)}
+              autoComplete="new-password"
+            />
+            <Button
+              loading={changePasswordMutation.isLoading}
+              disabled={!currentPassword || !newPassword || !confirmPassword}
+              onClick={onClickChangePassword}
+            >
+              更新密碼
+            </Button>
             <Button onClick={_ => signOut()} variant={'outline'} color='red'>
               登出
             </Button>

@@ -24,6 +24,7 @@ PostgreSQL。
 ## 主要功能
 
 - 匿名評論、待審核發佈、管理員回覆與刪除
+- 登入後修改管理員密碼，並使舊 session 失效
 - Hugo/PaperMod 嵌入與繁體中文 widget
 - 精確 CORS allowlist、評論與登入 rate limit
 - 選用 SMTP/SendGrid、Generic Webhook 與 Telegram Bot 通知

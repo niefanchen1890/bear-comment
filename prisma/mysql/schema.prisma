@@ -77,6 +77,17 @@ model VerificationRequest {
   @@map(name: "verification_requests")
 }
 
+model AdminCredential {
+  id           String   @id @default(uuid())
+  username     String   @unique
+  passwordHash String   @map(name: "password_hash") @db.Text
+  version      Int      @default(1)
+  createdAt    DateTime @default(now()) @map(name: "created_at")
+  updatedAt    DateTime @updatedAt @map(name: "updated_at")
+
+  @@map(name: "admin_credentials")
+}
+
 // next-auth END
 
 model Project {

@@ -157,11 +157,28 @@ export const getSession = async (req) => {
     return null
   }
 
+  const uid = (token.id || token.sub) as string
+  if (uid === resolvedConfig.localAuth.username) {
+    const credential = await prisma.adminCredential.findUnique({
+      where: { username: uid },
+      select: { version: true },
+    })
+    const expectedVersion = credential?.version || 0
+    const sessionVersion =
+      typeof (token as { adminCredentialVersion?: number }).adminCredentialVersion === 'number'
+        ? (token as { adminCredentialVersion: number }).adminCredentialVersion
+        : 0
+
+    if (sessionVersion !== expectedVersion) {
+      return null
+    }
+  }
+
   return {
     user: {
       name: token.name as string,
       email: token.email as string,
     },
-    uid: (token.id || token.sub) as string,
+    uid,
   } as UserSession
 }
