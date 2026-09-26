@@ -1,0 +1,13 @@
+.git
+.github
+.next
+node_modules
+widget/dist
+public/js
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+coverage
+docs

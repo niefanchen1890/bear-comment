@@ -1,0 +1,21 @@
+#!/bin/sh
+set -eu
+umask 077
+
+app_dir=${CUSDIS_APP_DIR:-/srv/bear-comment}
+backup_dir=${CUSDIS_BACKUP_DIR:-/var/backups/bear-comment}
+stamp=$(date -u +%Y%m%dT%H%M%SZ)
+temporary="$backup_dir/.cusdis-$stamp.dump.tmp"
+final="$backup_dir/cusdis-$stamp.dump"
+
+install -d -m 700 "$backup_dir"
+cd "$app_dir"
+docker compose exec -T postgres sh -c \
+  'pg_dump -U "$POSTGRES_USER" -d "$POSTGRES_DB" -Fc' > "$temporary"
+test -s "$temporary"
+mv "$temporary" "$final"
+
+# Keep two weeks of daily local backups. Copy backups off the VPS separately
+# when the comments become operationally important.
+find "$backup_dir" -maxdepth 1 -type f -name 'cusdis-*.dump' \
+  -mtime +14 -delete

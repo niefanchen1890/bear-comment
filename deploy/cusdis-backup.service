@@ -1,0 +1,20 @@
+[Unit]
+Description=Back up Cusdis PostgreSQL
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+Environment=CUSDIS_APP_DIR=/srv/bear-comment
+Environment=CUSDIS_BACKUP_DIR=/var/backups/bear-comment
+ExecStart=/usr/local/sbin/backup-cusdis
+User=root
+Group=root
+Nice=10
+IOSchedulingClass=best-effort
+IOSchedulingPriority=7
+PrivateTmp=true
+NoNewPrivileges=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/var/backups/bear-comment
