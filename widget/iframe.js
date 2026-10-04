@@ -23,18 +23,43 @@ function postMessage(event, data = {}) {
   )
 }
 
+let lastHeight = 0
+let resizeFrame
+
+function requestResize() {
+  window.cancelAnimationFrame(resizeFrame)
+  resizeFrame = window.requestAnimationFrame(() => {
+    const height = Math.ceil(
+      Math.max(
+        document.documentElement.scrollHeight,
+        document.body?.scrollHeight || 0,
+        target?.scrollHeight || 0,
+      ),
+    )
+
+    if (height !== lastHeight) {
+      lastHeight = height
+      postMessage('resize', height)
+    }
+  })
+}
+
 postMessage('onload')
 requestResize()
 
-function requestResize() {
-  postMessage('resize', document.documentElement.offsetHeight)
+if ('ResizeObserver' in window) {
+  const resizeObserver = new ResizeObserver(requestResize)
+  resizeObserver.observe(target)
 }
 
-const resizeObserve = new MutationObserver(() => {
-  requestResize()
+const mutationObserver = new MutationObserver(requestResize)
+
+mutationObserver.observe(target, {
+  childList: true,
+  subtree: true,
+  attributes: true,
+  characterData: true,
 })
 
-resizeObserve.observe(target, {
-  childList: true,
-  subtree: true
-})
+window.addEventListener('load', requestResize)
+window.addEventListener('resize', requestResize)
