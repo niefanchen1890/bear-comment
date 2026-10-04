@@ -5,23 +5,54 @@ const scriptHost = (() => {
   return script?.src ? new URL(script.src).origin : window.location.origin
 })()
 
+const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)')
+
+const resolveTheme = (target) => {
+  if (target.dataset.theme === 'dark' || target.dataset.theme === 'light') {
+    return target.dataset.theme
+  }
+
+  const documentTheme = document.documentElement.dataset.theme
+  if (documentTheme === 'dark' || documentTheme === 'light') {
+    return documentTheme
+  }
+
+  if (
+    document.documentElement.classList.contains('dark') ||
+    document.body?.classList.contains('dark')
+  ) {
+    return 'dark'
+  }
+
+  return darkModeQuery.matches ? 'dark' : 'light'
+}
+
 const makeIframeContent = (target) => {
   const host = target.dataset.host || scriptHost
   const iframeJsPath = target.dataset.iframe || `${host}/js/iframe.umd.js`
   const cssPath = `${host}/js/style.css`
+  const initialTheme = resolveTheme(target)
+  const iframeData = {
+    ...target.dataset,
+    theme: initialTheme,
+  }
   return `<!DOCTYPE html>
-<html>
+<html data-theme="${initialTheme}">
   <head>
     <link rel="stylesheet" href="${cssPath}">
     <base target="_parent" />
     <link>
     <script>
       window.CUSDIS_LOCALE = ${JSON.stringify(window.CUSDIS_LOCALE)}
-      window.__DATA__ = ${JSON.stringify(target.dataset)}
+      window.__DATA__ = ${JSON.stringify(iframeData)}
     </script>
     <style>
       :root {
-        color-scheme: light;
+        color-scheme: ${initialTheme};
+        background: transparent;
+      }
+      html, body, #root {
+        background: transparent;
       }
     </style>
   </head>
@@ -61,7 +92,11 @@ function postMessage(event, data) {
 }
 
 function listenEvent(iframe, target) {
-  const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)')
+  const syncTheme = () => {
+    if (target.dataset.theme === 'auto') {
+      postMessage('setTheme', resolveTheme(target))
+    }
+  }
 
   const onMessage = (e) => {
     try {
@@ -70,12 +105,7 @@ function listenEvent(iframe, target) {
         switch (msg.event) {
           case 'onload':
             {
-              if (target.dataset.theme === 'auto') {
-                postMessage(
-                  'setTheme',
-                  darkModeQuery.matches ? 'dark' : 'light',
-                )
-              }
+              syncTheme()
             }
             break
           case 'resize':
@@ -91,15 +121,25 @@ function listenEvent(iframe, target) {
   window.addEventListener('message', onMessage)
 
   function onChangeColorScheme(e) {
-    const isDarkMode = e.matches
-    if (target.dataset.theme === 'auto') {
-      postMessage('setTheme', isDarkMode ? 'dark' : 'light')
-    }
+    syncTheme()
   }
 
   darkModeQuery.addEventListener('change', onChangeColorScheme)
 
+  const themeObserver = new MutationObserver(syncTheme)
+  themeObserver.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['class', 'data-theme'],
+  })
+  if (document.body) {
+    themeObserver.observe(document.body, {
+      attributes: true,
+      attributeFilter: ['class'],
+    })
+  }
+
   return () => {
+    themeObserver.disconnect()
     darkModeQuery.removeEventListener('change', onChangeColorScheme)
     window.removeEventListener('message', onMessage)
   }

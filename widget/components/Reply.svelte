@@ -58,13 +58,15 @@
 </script>
 
 <div class="grid grid-cols-1 gap-4">
-  <div class="grid grid-cols-2 gap-4">
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
     <div class="px-1">
       <label class="mb-2 block dark:text-gray-200" for="nickname">{t('nickname')}</label>
       <input
+        id="nickname"
         name="nickname"
-        class="w-full p-2 border border-gray-200 bg-transparent dark:text-gray-100 dark:outline-none"
+        class="cusdis-input w-full rounded p-2 border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
         type="text"
+        autocomplete="name"
         title={t('nickname')}
         bind:value={nickname}
       />
@@ -72,9 +74,11 @@
     <div class="px-1">
       <label class="mb-2 block dark:text-gray-200" for="email">{t('email')}</label>
       <input
+        id="email"
         name="email"
-        class="w-full p-2 border border-gray-200 bg-transparent  dark:text-gray-100 dark:outline-none"
+        class="cusdis-input w-full rounded p-2 border border-gray-300 bg-white text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
         type="email"
+        autocomplete="email"
         title={t('email')}
         bind:value={email}
       />
@@ -84,8 +88,9 @@
   <div class="px-1">
     <label class="mb-2 block dark:text-gray-200" for="reply_content">{t('reply_placeholder')}</label>
     <textarea
+      id="reply_content"
       name="reply_content"
-      class="w-full p-2 border border-gray-200 h-24 bg-transparent dark:text-gray-100 dark:outline-none"
+      class="cusdis-input w-full rounded p-2 border border-gray-300 h-24 bg-white text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
       title={t('reply_placeholder')}
       bind:value={content}
     />
@@ -93,8 +98,9 @@
 
   <div class="px-1">
     <button
-
-      class="text-sm bg-gray-200 p-2 px-4 font-bold dark:bg-transparent dark:border dark:border-gray-100"
+      type="button"
+      disabled={loading}
+      class="cusdis-submit rounded border border-gray-300 bg-gray-200 p-2 px-4 text-sm font-bold text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
       class:cusdis-disabled={loading}
       on:click={addComment}>{loading ? t('sending') : t('post_comment')}</button
     >

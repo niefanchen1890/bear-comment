@@ -17,7 +17,7 @@
 
   let error
 
-  let theme = attrs.theme || 'light'
+  let theme = attrs.theme === 'dark' ? 'dark' : 'light'
 
   const api = axios.create({
     baseURL: attrs.host,
@@ -29,6 +29,7 @@
 
   $: {
     document.documentElement.style.setProperty('color-scheme', theme)
+    document.documentElement.dataset.theme = theme
   }
 
   onMount(() => {
@@ -92,7 +93,7 @@
 </script>
 
 {#if !error}
-  <div class:dark={theme === 'dark'}>
+  <div class="cusdis-widget text-gray-900 dark:text-gray-100" class:dark={theme === 'dark'}>
     {#if message}
       <div class="p-2 mb-4 bg-blue-500 text-white">
         {message}

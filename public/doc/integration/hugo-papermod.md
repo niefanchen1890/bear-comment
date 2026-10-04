@@ -28,6 +28,8 @@ params:
 ```
 
 語言檔必須先載入，兩個 script 都用 `defer`，不要加入 `async`。
+`data-theme="auto"` 會跟隨 PaperMod 的 `<html data-theme>` 與系統深色模式，
+並在桌面或手機切換主題時即時更新。
 
 Bear Comment `.env` 必須允許 Hugo origins：
 

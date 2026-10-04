@@ -3,6 +3,55 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  color-scheme: light dark;
+  background: transparent;
+}
+
+html,
+body,
+#root,
+.cusdis-widget {
+  background: transparent;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+.cusdis-input {
+  color-scheme: inherit;
+  transition: border-color 120ms ease-out, box-shadow 120ms ease-out,
+    background-color 120ms ease-out;
+}
+
+.cusdis-input:focus-visible {
+  border-color: #6b7280;
+  box-shadow: 0 0 0 2px rgb(107 114 128 / 25%);
+  outline: none;
+}
+
+.dark .cusdis-input:focus-visible {
+  border-color: #9ca3af;
+  box-shadow: 0 0 0 2px rgb(156 163 175 / 28%);
+}
+
+button,
+a,
+[role='button'] {
+  touch-action: manipulation;
+}
+
+.cusdis-submit {
+  -webkit-user-select: none;
+  user-select: none;
+  transition: background-color 120ms ease-out, transform 100ms ease-out;
+}
+
+.cusdis-submit:active {
+  transform: scale(0.98);
+}
+
 blockquote {
   @apply px-4 py-2 bg-gray-100 my-4 dark:bg-gray-900;
 }

@@ -55,18 +55,27 @@ params:
 <script id="cusdis-script" defer src="{{ strings.TrimRight "/" $cusdis.host }}/js/cusdis.es.js"></script>
 <script>
   (() => {
+    const preferredTheme = window.matchMedia("(prefers-color-scheme: dark)");
+    const getCusdisTheme = () => {
+      const theme = document.documentElement.dataset.theme;
+      if (theme === "dark" || theme === "light") return theme;
+      if (
+        document.documentElement.classList.contains("dark") ||
+        document.body.classList.contains("dark")
+      ) return "dark";
+      return preferredTheme.matches ? "dark" : "light";
+    };
     const syncCusdisTheme = () => {
       if (window.CUSDIS && window.CUSDIS.setTheme) {
-        window.CUSDIS.setTheme(
-          document.body.classList.contains("dark") ? "dark" : "light"
-        );
+        window.CUSDIS.setTheme(getCusdisTheme());
       }
     };
     document.getElementById("cusdis-script")?.addEventListener("load", syncCusdisTheme);
-    new MutationObserver(syncCusdisTheme).observe(document.body, {
+    new MutationObserver(syncCusdisTheme).observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ["class"]
+      attributeFilter: ["class", "data-theme"]
     });
+    preferredTheme.addEventListener("change", syncCusdisTheme);
   })();
 </script>
 {{- end -}}
@@ -74,6 +83,10 @@ params:
 
 語言檔必須在 widget 前載入。兩個 script 都使用 `defer`；不要加入 `async`，否則 widget
 可能先執行並退回英文。
+
+`data-theme="auto"` 會優先跟隨 PaperMod 在 `<html data-theme>` 上的設定，
+並在主題切換時即時更新 iframe。如果網站沒有明確主題屬性，則跟隨
+`prefers-color-scheme`。
 
 ## 3. PaperMod 顯示條件
 
