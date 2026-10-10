@@ -25,7 +25,7 @@ Bot Token 是 secret，不可貼到 dashboard Webhook 欄位、commit 或公開�
 - 專案與頁面
 - 暱稱
 - 評論內容
-- 三天有效的審核連結
+- 需要登入的管理後台連結
 
 訪客 email 不會傳至 Telegram。
 

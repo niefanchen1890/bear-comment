@@ -2,7 +2,6 @@ import { Comment } from '@prisma/client'
 import axios from 'axios'
 import { RequestScopeService } from '.'
 import { prisma, resolvedConfig } from '../utils.server'
-import { TokenService } from './token.service'
 import { safeHttpsAgent } from './webhook-url.service'
 
 function escapeHtml(value: string) {
@@ -21,8 +20,6 @@ function truncate(value: string, maxLength: number) {
 }
 
 export class TelegramService extends RequestScopeService {
-  tokenService = new TokenService()
-
   async addComment(comment: Comment, projectId: string) {
     const { botToken, chatId } = resolvedConfig.telegram
     if (!botToken || !chatId || comment.moderatorId) {
@@ -54,8 +51,7 @@ export class TelegramService extends RequestScopeService {
       return
     }
 
-    const approveToken = await this.tokenService.genApproveToken(comment.id)
-    const approveLink = `${resolvedConfig.host}/open/approve?token=${approveToken}`
+    const manageLink = `${resolvedConfig.host}/dashboard/project/${projectId}`
     const pageLabel = fullComment.page.title || fullComment.page.slug
     const page = fullComment.page.url
       ? `<a href="${escapeHtml(fullComment.page.url)}">${escapeHtml(pageLabel)}</a>`
@@ -69,7 +65,7 @@ export class TelegramService extends RequestScopeService {
       '',
       `<b>內容：</b>\n${escapeHtml(truncate(comment.content, 2_500))}`,
       '',
-      `<a href="${escapeHtml(approveLink)}">審核這則評論</a>`,
+      `<a href="${escapeHtml(manageLink)}">管理或刪除這則評論</a>`,
     ].join('\n')
 
     try {

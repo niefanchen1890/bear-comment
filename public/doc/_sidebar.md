@@ -2,7 +2,7 @@
 - [Docker 自託管](self-host/docker.md)
 - [Node.js 原生部署](self-host/manual.md)
 - [Hugo + PaperMod](integration/hugo-papermod.md)
-- [評論審核](features/moderation.md)
+- [評論管理](features/moderation.md)
 - [通知](features/notification.md)
 - [Telegram](advanced/telegram.md)
 - [Generic Webhook](advanced/webhook.md)

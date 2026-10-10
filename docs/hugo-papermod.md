@@ -123,10 +123,10 @@ CORS_ORIGINS=https://example.com,https://www.example.com
 
 1. 訪客輸入必填暱稱、選填 email 與評論內容。
 2. Widget POST 至 `/api/open/comments`。
-3. PostgreSQL 建立 `approved=false` 的評論。
+3. PostgreSQL 建立 `approved=true` 的評論，widget 重新載入後立即顯示。
 4. Email/Webhook/Telegram 通知（如已配置）。
-5. 管理員在 dashboard 或三天有效審核連結批准。
-6. Widget 只公開顯示已批准且未刪除的評論。
+5. 管理員可從通知進入 dashboard，回覆或刪除不適當評論。
+6. Widget 只顯示已公開且未刪除的評論。
 
 ## 7. 驗證
 
@@ -138,4 +138,4 @@ curl --fail https://comments.example.com/api/health
 ```
 
 再以全新瀏覽器 profile 或無痕視窗實際檢查：表單可見、語言正確、明暗主題切換、提交後
-保持待審核、批准後顯示。
+立即顯示，並確認管理員能在 dashboard 刪除測試評論。

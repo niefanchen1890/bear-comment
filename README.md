@@ -1,8 +1,8 @@
 # Bear Comment 自託管維護版
 
 這是從 `djyde/cusdis` 延續維護的自託管 fork，主要用於 Hugo +
-PaperMod 網站。訪客不需註冊或登入即可留言；新評論預設為待審核，
-只有管理員批准後才會公開。
+PaperMod 網站。訪客不需註冊或登入即可留言；新評論提交後立即公開，
+管理員可在後台回覆或刪除不適當內容。
 
 本 fork 保留原有 Next.js Pages Router、Prisma、PostgreSQL、管理後台與
 Svelte widget 架構，只進行建置、安全、相容性和維運所需的修正。
@@ -23,7 +23,7 @@ PostgreSQL。
 
 ## 主要功能
 
-- 匿名評論、待審核發佈、管理員回覆與刪除
+- 匿名評論立即發佈、管理員回覆與刪除
 - 登入後修改管理員密碼，並使舊 session 失效
 - Hugo/PaperMod 嵌入與繁體中文 widget
 - 精確 CORS allowlist、評論與登入 rate limit
@@ -47,7 +47,7 @@ PostgreSQL
        +--> Telegram / Email / Generic Webhook（選用）
 ```
 
-評論、審核狀態、專案與管理員資料都儲存在自己的 PostgreSQL。
+評論、專案與管理員資料都儲存在自己的 PostgreSQL。
 
 ## 開發快速開始
 

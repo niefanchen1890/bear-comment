@@ -19,6 +19,6 @@ Service、Vercel、Railway 和第三方 `@CusdisBot` 流程不在本手冊的支
 - package manager：pnpm 8.15.9
 - 建議入口：nginx/Caddy HTTPS reverse proxy
 - 嵌入網站：Hugo + PaperMod
-- 評論模式：匿名留言、先審核後公開
+- 評論模式：匿名留言、提交後立即公開，管理員可手動刪除
 
 SQLite 與 MySQL schema 仍在 repository 中，但沒有納入本 fork 的正式環境驗證。

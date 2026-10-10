@@ -3,7 +3,6 @@ import axios from 'axios'
 import { RequestScopeService } from '.'
 import { prisma, resolvedConfig } from '../utils.server'
 import { statService } from './stat.service'
-import { TokenService } from './token.service'
 import {
   parseWebhookUrl,
   safeHttpAgent,
@@ -26,11 +25,11 @@ export type NewCommentHookData = {
   page_id: string
   page_title: string
   content: string
+  manage_link: string
+  approve_link: string
 }
 
 export class WebhookService extends RequestScopeService {
-  tokenService = new TokenService()
-
   async addComment(comment: Comment, projectId: string) {
     const project = await prisma.project.findUnique({
       where: {
@@ -60,8 +59,7 @@ export class WebhookService extends RequestScopeService {
         },
       })
 
-      const approveToken = await this.tokenService.genApproveToken(comment.id)
-      const approveLink = `${resolvedConfig.host}/open/approve?token=${approveToken}`
+      const manageLink = `${resolvedConfig.host}/dashboard/project/${projectId}`
 
       statService.capture('webhook_trigger', {
         properties: {
@@ -79,7 +77,9 @@ export class WebhookService extends RequestScopeService {
             page_id: fullComment.page.slug,
             page_title: fullComment.page.title,
             project_title: fullComment.page.project.title,
-            approve_link: approveLink,
+            manage_link: manageLink,
+            // Keep the legacy field so existing webhook consumers do not break.
+            approve_link: manageLink,
           },
         } as HookBody<NewCommentHookData>, {
           httpAgent: safeHttpAgent,

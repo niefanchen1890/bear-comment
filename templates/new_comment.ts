@@ -3,7 +3,7 @@ export function makeNewCommentEmailTemplate(data: {
   content: string
   by_nickname: string
   unsubscribe_link: string
-  approve_link: string
+  manage_link: string
   notification_preferences_link: string
 }) {
   const escapedData = {
@@ -221,7 +221,7 @@ export function makeNewCommentEmailTemplate(data: {
               <tbody>
                 <tr>
                 <td align="center" bgcolor="#3f72af" class="inner-td" style="border-radius:6px; font-size:16px; text-align:left; background-color:inherit;">
-                  <a href="{{approve_link}}" style="background-color:#3f72af; border:1px solid #333333; border-color:#333333; border-radius:6px; border-width:1px; color:#ffffff; display:inline-block; font-size:12px; font-weight:bold; letter-spacing:0px; line-height:normal; padding:12px 18px 12px 18px; text-align:center; text-decoration:none; border-style:solid; font-family:verdana,geneva,sans-serif;" target="_blank">無需登入即可核准或回覆</a>
+                  <a href="{{manage_link}}" style="background-color:#3f72af; border:1px solid #333333; border-color:#333333; border-radius:6px; border-width:1px; color:#ffffff; display:inline-block; font-size:12px; font-weight:bold; letter-spacing:0px; line-height:normal; padding:12px 18px 12px 18px; text-align:center; text-decoration:none; border-style:solid; font-family:verdana,geneva,sans-serif;" target="_blank">登入管理或刪除評論</a>
                 </td>
                 </tr>
               </tbody>

@@ -11,13 +11,13 @@
 - 修改密碼 API 檢查 session、同源請求、現有密碼與 rate limit。
 - 密碼版本會綁定 JWT；修改密碼後，舊的管理 session 會失效。
 - OAuth 只允許 `ALLOWED_AUTH_EMAILS` 中的帳號。
-- 審核連結是有期限的簽名 token；收到連結的人可批准評論，因此必須當作敏感資料。
+- 通知中的管理入口需要有效的管理員 session，評論刪除仍會檢查專案擁有者。
 
 ### 公開評論 API
 
 - 評論內容、暱稱、email、URL、page ID 與 request body 有大小限制。
 - Markdown 不支援 raw HTML、圖片和可點擊連結。
-- 新評論預設不公開，必須經過審核。
+- 新評論提交後立即公開；管理員應透過通知及時檢查並刪除不適當內容。
 - 公開評論和管理員登入有獨立 rate limit。
 - `CORS_ORIGINS` 只允許指定的 Hugo origin。
 
@@ -41,8 +41,8 @@
 
 - rate limit 目前儲存在單一 application process 記憶體。擴展為多個 instance 前，應改用 Redis 或 reverse proxy shared limit。
 - 專案沒有 CAPTCHA 或完整 spam classifier；大量公開流量時應再增加 nginx/CDN rate limit。
-- 審核連結有效期為三天，不應轉傳或發佈。
-- Telegram 通知會將暱稱、頁面、評論內容與審核連結傳至 Telegram 伺服器。
+- 自動公開模式會增加垃圾留言短暫出現在網站上的風險；現有 rate limit 不能取代人工管理。
+- Telegram 通知會將暱稱、頁面與評論內容傳至 Telegram 伺服器。
 - Dependency audit 只反映執行當日已公開的 advisory；升級前應重新執行 `pnpm audit --prod`。
 
 ## 機密資料

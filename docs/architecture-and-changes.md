@@ -16,7 +16,7 @@
   +-- Bear Comment 管理後台
          |
          +-- NextAuth JWT session
-         +-- 審核、回覆、刪除、專案設定
+         +-- 回覆、刪除、專案設定
 
 Next.js Pages Router
   |
@@ -38,7 +38,7 @@ Next.js Pages Router
 - Svelte iframe widget
 - Prisma data model 與 PostgreSQL migrations
 - NextAuth 管理員登入
-- 專案、頁面、評論、回覆和審核流程
+- 專案、頁面、評論、回覆和管理流程
 - Email、Generic Webhook、Disqus XML import
 
 ## 建置與 dependency 現代化
@@ -68,6 +68,7 @@ Next.js Pages Router
   瀏覽器回傳 `480` 時 API 400 而隱藏表單的問題。
 - 繁體中文語言檔在 widget script 前以 `defer` 載入，避免 `async` 時序競爭。
 - PaperMod 明暗主題切換時同步 Bear Comment iframe 主題。
+- 新匿名評論提交後立即公開；保留管理員回覆與軟刪除流程。
 
 ## 資料庫修正
 
@@ -83,7 +84,7 @@ Next.js Pages Router
 - Generic Webhook 禁止 credential URL、private/reserved IP、redirect，並設定 timeout。
 - 修正 Node.js 22 Agent 回傳多個 DNS address 時的誤判；仍會逐一攔截私有 IP。
 - 加入原生 Telegram Bot 通知，Bot Token 和 Chat ID 只存於 `.env`。
-- Telegram 通知包含三天有效的審核連結，不傳送訪客 email。
+- Telegram 通知包含需要登入的管理後台連結，不傳送訪客 email。
 
 ## 維運修正
 

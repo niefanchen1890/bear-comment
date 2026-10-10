@@ -8,7 +8,7 @@
 - 頁面標題與 URL
 - 訪客暱稱
 - 評論內容
-- 三天內有效的審核連結
+- 需要登入的管理後台連結
 
 訪客 email 不會傳給 Telegram，管理員回覆不會觸發新通知。
 
@@ -65,6 +65,7 @@ Bear Comment Generic Webhook 送出的 body 是：
     "page_id": "...",
     "page_title": "...",
     "project_title": "...",
+    "manage_link": "...",
     "approve_link": "..."
   }
 }
@@ -76,9 +77,9 @@ Telegram `sendMessage` 需要 `chat_id` 和 `text`，因此不可把 Telegram AP
 ## 驗證
 
 1. 在 Hugo 頁面送出一則測試評論。
-2. 確認評論保持待審核。
+2. 確認評論提交後立即顯示。
 3. 確認 bot 收到「Bear Comment 新評論」。
-4. 點擊審核連結或在 dashboard 批准。
+4. 點擊管理連結並登入 dashboard。
 5. 刪除測試評論。
 
 ## 診斷

@@ -12,7 +12,8 @@
     "page_id": "/post/example/",
     "page_title": "Example",
     "project_title": "My site",
-    "approve_link": "https://comments.example.com/open/approve?token=..."
+    "manage_link": "https://comments.example.com/dashboard/project/project-id",
+    "approve_link": "https://comments.example.com/dashboard/project/project-id"
   }
 }
 ```
@@ -24,6 +25,6 @@
 - DNS 解析到 private、loopback、link-local 或 reserved IP 時拒絕。
 - 連線時再次檢查 DNS，避免 DNS rebinding。
 - 不跟隨 redirect，timeout 5 秒。
-- 接收端必須保護訪客 email 與審核連結。
+- 接收端必須保護訪客 email。`approve_link` 是為相容舊接收端保留的管理連結別名。
 
 Telegram 請使用本 fork 的原生 Telegram 設定，不需啟用 Generic Webhook。

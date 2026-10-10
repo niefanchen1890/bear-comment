@@ -69,8 +69,6 @@ export class NotificationService extends RequestScopeService {
         project.owner.id,
       )
 
-      const approveToken = await this.tokenService.genApproveToken(comment.id)
-
       const msg = {
         to: notificationEmail, // Change to your recipient
         from: resolvedConfig.smtp.senderAddress,
@@ -78,7 +76,7 @@ export class NotificationService extends RequestScopeService {
         html: makeNewCommentEmailTemplate({
           page_slug: fullComment.page.title || fullComment.page.slug,
           by_nickname: comment.by_nickname,
-          approve_link: `${resolvedConfig.host}/open/approve?token=${approveToken}`,
+          manage_link: `${resolvedConfig.host}/dashboard/project/${projectId}`,
           unsubscribe_link: `${resolvedConfig.host}/api/open/unsubscribe?token=${unsubscribeToken}`,
           content: markdown.render(comment.content),
           notification_preferences_link: `${resolvedConfig.host}/user`,
